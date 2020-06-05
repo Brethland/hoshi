@@ -19,6 +19,7 @@ pub fn sel_fwd_a<'a>(c: &'a Context<'a>) -> &'a Module<'a> {
     let w_dst_m  = sel.input("W_dstM", NIBBLE);
     let w_val_m  = sel.input("W_valM", QWORD);
 
+    // Orders matter
     let mux_w_dst_e = sel.mux(d_src_a.eq(w_dst_e), w_val_e, d_rval_a);
     let mux_w_dst_m = sel.mux(d_src_a.eq(w_dst_m), w_val_m, mux_w_dst_e);
     let mux_m_dst_e = sel.mux(d_src_a.eq(m_dst_e), m_val_e, mux_w_dst_m);
@@ -67,24 +68,13 @@ pub fn src_a<'a>(c: &'a Context<'a>) -> &'a Module<'a> {
 
     let r_none = src.lit(RNONE, NIBBLE);
     let r_rsp  = src.lit(RRSP, NIBBLE);
-    
-    let sel_v_a = src.instance("sel_v_a", "12_1_selector_NIBBLE");
-    sel_v_a.drive_input("s_sel", d_icode);
 
-    sel_v_a.drive_input("s_m1", r_none);
-    sel_v_a.drive_input("s_m2", r_none);
-    sel_v_a.drive_input("s_m3", d_r_a);
-    sel_v_a.drive_input("s_m4", r_none);
-    sel_v_a.drive_input("s_m5", d_r_a);
-    sel_v_a.drive_input("s_m6", r_none);
-    sel_v_a.drive_input("s_m7", d_r_a);
-    sel_v_a.drive_input("s_m8", r_none);
-    sel_v_a.drive_input("s_m9", r_none);
-    sel_v_a.drive_input("s_m10", r_rsp);
-    sel_v_a.drive_input("s_m11", d_r_a);
-    sel_v_a.drive_input("s_m12", r_rsp);
+    let mux_1 = src.mux(d_icode.eq(src.lit(IHALT, NIBBLE)) | d_icode.eq(src.lit(INOP, NIBBLE)) | d_icode.eq(src.lit(IIRMOVQ, NIBBLE)) |
+                         d_icode.eq(src.lit(IMRMOVQ, NIBBLE)) | d_icode.eq(src.lit(IJXX, NIBBLE)) | d_icode.eq(src.lit(ICALL, NIBBLE)), r_none, r_rsp);
+    let mux_2 = src.mux(d_icode.eq(src.lit(IRRMOVQ, NIBBLE)) | d_icode.eq(src.lit(IRMMOVQ, NIBBLE)) | d_icode.eq(src.lit(IOPQ, NIBBLE)) |
+                         d_icode.eq(src.lit(IPUSHQ, NIBBLE)), d_r_a, mux_1);
 
-    src.output("d_srcA", sel_v_a.output("sel_out_NIBBLE"));
+    src.output("d_srcA", mux_2);
 
     src
 }
@@ -97,24 +87,12 @@ pub fn src_b<'a>(c: &'a Context<'a>) -> &'a Module<'a> {
 
     let r_none = src.lit(RNONE, NIBBLE);
     let r_rsp  = src.lit(RRSP, NIBBLE);
-    
-    let sel_v_b = src.instance("sel_v_b", "12_1_selector_NIBBLE");
-    sel_v_b.drive_input("s_sel", d_icode);
 
-    sel_v_b.drive_input("s_m1", r_none);
-    sel_v_b.drive_input("s_m2", r_none);
-    sel_v_b.drive_input("s_m3", r_none);
-    sel_v_b.drive_input("s_m4", r_none);
-    sel_v_b.drive_input("s_m5", d_r_b);
-    sel_v_b.drive_input("s_m6", d_r_b);
-    sel_v_b.drive_input("s_m7", d_r_b);
-    sel_v_b.drive_input("s_m8", r_none);
-    sel_v_b.drive_input("s_m9", r_rsp);
-    sel_v_b.drive_input("s_m10", r_rsp);
-    sel_v_b.drive_input("s_m11", r_rsp);
-    sel_v_b.drive_input("s_m12", r_rsp);
+    let mux_1 = src.mux(d_icode.eq(src.lit(IHALT, NIBBLE)) | d_icode.eq(src.lit(INOP, NIBBLE)) | d_icode.eq(src.lit(IIRMOVQ, NIBBLE)) |
+                         d_icode.eq(src.lit(IRRMOVQ, NIBBLE)) | d_icode.eq(src.lit(IJXX, NIBBLE)), r_none, r_rsp);
+    let mux_2 = src.mux(d_icode.eq(src.lit(IMRMOVQ, NIBBLE)) | d_icode.eq(src.lit(IRMMOVQ, NIBBLE)) | d_icode.eq(src.lit(IOPQ, NIBBLE)), d_r_b, mux_1);
 
-    src.output("d_srcB", sel_v_b.output("sel_out_NIBBLE"));
+    src.output("d_srcB", mux_2);
 
     src
 }
@@ -127,24 +105,12 @@ pub fn dst_e<'a>(c: &'a Context<'a>) -> &'a Module<'a> {
 
     let r_none = dst.lit(RNONE, NIBBLE);
     let r_rsp  = dst.lit(RRSP, NIBBLE);
-    
-    let sel_d_e = dst.instance("sel_d_e", "12_1_selector_NIBBLE");
-    sel_d_e.drive_input("s_sel", d_icode);
 
-    sel_d_e.drive_input("s_m1", r_none);
-    sel_d_e.drive_input("s_m2", r_none);
-    sel_d_e.drive_input("s_m3", d_r_b);
-    sel_d_e.drive_input("s_m4", d_r_b);
-    sel_d_e.drive_input("s_m5", r_none);
-    sel_d_e.drive_input("s_m6", r_none);
-    sel_d_e.drive_input("s_m7", d_r_b);
-    sel_d_e.drive_input("s_m8", r_none);
-    sel_d_e.drive_input("s_m9", r_rsp);
-    sel_d_e.drive_input("s_m10", r_rsp);
-    sel_d_e.drive_input("s_m11", r_rsp);
-    sel_d_e.drive_input("s_m12", r_rsp);
+    let mux_1 = dst.mux(d_icode.eq(dst.lit(IHALT, NIBBLE)) | d_icode.eq(dst.lit(INOP, NIBBLE)) | d_icode.eq(dst.lit(IMRMOVQ, NIBBLE)) |
+                         d_icode.eq(dst.lit(IRMMOVQ, NIBBLE)) | d_icode.eq(dst.lit(IJXX, NIBBLE)), r_none, r_rsp);
+    let mux_2 = dst.mux(d_icode.eq(dst.lit(IIRMOVQ, NIBBLE)) | d_icode.eq(dst.lit(IRRMOVQ, NIBBLE)) | d_icode.eq(dst.lit(IOPQ, NIBBLE)), d_r_b, mux_1);
 
-    dst.output("d_dstE", sel_d_e.output("sel_out_NIBBLE"));
+    dst.output("d_dstE", mux_2);
 
     dst
 }
@@ -157,10 +123,9 @@ pub fn dst_m<'a>(c: &'a Context<'a>) -> &'a Module<'a> {
 
     let r_none = dst.lit(RNONE, NIBBLE);
 
-    let mux_1 = dst.mux(d_icode.eq(dst.lit(IMRMOVQ, NIBBLE)), d_r_a, r_none);
-    let mux_2 = dst.mux(d_icode.eq(dst.lit(IPOPQ, NIBBLE)), d_r_a, mux_1);
+    let mux_1 = dst.mux(d_icode.eq(dst.lit(IMRMOVQ, NIBBLE)) | d_icode.eq(dst.lit(IPOPQ, NIBBLE)), d_r_a, r_none);
 
-    dst.output("d_dstM", mux_2);
+    dst.output("d_dstM", mux_1);
 
     dst
 }
