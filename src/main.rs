@@ -8,6 +8,9 @@ pub mod f_fetch;
 pub mod pc_sel;
 
 pub mod d_reg;
+pub mod d_decode;
+
+pub mod e_reg;
 
 fn main() {
     // let y86_context = Context::new();
