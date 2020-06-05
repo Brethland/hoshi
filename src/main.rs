@@ -12,6 +12,11 @@ pub mod d_decode;
 pub mod e_reg;
 pub mod e_execute;
 
+pub mod m_reg;
+pub mod m_memory;
+
+pub mod w_reg;
+
 fn main() {
     // let y86_context = Context::new();
 }
