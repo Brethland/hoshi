@@ -32,7 +32,7 @@ pub fn mem_control<'a>(c: &'a Context<'a>) -> &'a Module {
 pub fn m_stat<'a>(c: &'a Context<'a>) -> &'a Module {
     let m = c.module("MStat");
 
-    let d_mem_error = m.input("dmem_error", BIT);
+    let d_mem_error   = m.input("dmem_error", BIT);
     let m_stat_i      = m.input("M_stat", NIBBLE);
 
     m.output("m_stat", m.mux(d_mem_error.eq(m.high()), m.lit(SADR, NIBBLE), m_stat_i));

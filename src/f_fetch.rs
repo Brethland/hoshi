@@ -12,7 +12,7 @@ pub fn f_fetch<'a>(c: &'a Context<'a>) -> &'a Module {
     let ifun  = f.mux(imem_error, f.lit(FNONE, NIBBLE), inst.bits(7, 4));
     let r_a   = inst.bits(11, 8);
     let r_b   = inst.bits(15, 12);
-    let val_c = inst.bits(79, 13);
+    let val_c = inst.bits(79, 16);
 
     let val_none = f.lit(false, QWORD);
     let r_none   = f.lit(RNONE, NIBBLE);

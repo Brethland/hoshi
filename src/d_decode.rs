@@ -33,8 +33,8 @@ pub fn sel_fwd_a<'a>(c: &'a Context<'a>) -> &'a Module<'a> {
     sel
 }
 
-pub fn sel_fwd_b<'a>(c: &'a Context<'a>) -> &'a Module<'a> {
-    let sel = c.module("SelFwdB");
+pub fn fwd_b<'a>(c: &'a Context<'a>) -> &'a Module<'a> {
+    let sel = c.module("FwdB");
 
     let d_src_b  = sel.input("d_srcB", NIBBLE);
     let d_rval_b = sel.input("d_rvalB", QWORD);

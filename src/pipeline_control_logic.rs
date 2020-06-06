@@ -14,7 +14,7 @@ pub fn pipeline<'a>(c: &'a Context<'a>) -> &'a Module {
     let e_cnd   = p.input("e_cnd", BIT);
     let m_icode = p.input("M_icode", NIBBLE);
     let m_stat  = p.input("m_stat", NIBBLE);
-    let w_stat  = p.input("w_stat", NIBBLE);
+    let w_stat  = p.input("W_stat", NIBBLE);
 
     let f_stall_reg = p.reg("F_stall_reg", BIT);
     f_stall_reg.default_value(false);
