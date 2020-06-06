@@ -1,6 +1,7 @@
 // use kaze::*;
 
 pub mod y86_defines;
+pub mod pipeline_control_logic;
 
 pub mod f_reg;
 pub mod f_fetch;

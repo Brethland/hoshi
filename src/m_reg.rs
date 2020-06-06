@@ -4,6 +4,7 @@ use kaze::*;
 pub fn m_reg<'a>(c: &'a Context<'a>) -> &'a Module {
     let m = c.module("MRegister");
 
+    let m_bubble = m.input("M_bubble", BIT);
     let m_stat   = m.input("M_stat_i", NIBBLE);
     let m_icode  = m.input("M_icode_i", NIBBLE);
     let m_val_a  = m.input("M_valA_i", QWORD);
@@ -14,16 +15,17 @@ pub fn m_reg<'a>(c: &'a Context<'a>) -> &'a Module {
 
     let m_reg_stat = m.reg("M_reg_stat", NIBBLE);
     m_reg_stat.drive_next(m_stat);
+
     let m_reg_icode = m.reg("M_reg_icode", NIBBLE);
-    m_reg_icode.drive_next(m_icode);
+    m_reg_icode.drive_next(m.mux(m_bubble.eq(m.lit(ENABLE, BIT)), m.lit(INOP, NIBBLE), m_icode));
     let m_reg_val_a = m.reg("M_reg_valA", QWORD);
-    m_reg_val_a.drive_next(m_val_a);
+    m_reg_val_a.drive_next(m.mux(m_bubble.eq(m.lit(ENABLE, BIT)), m.lit(false, QWORD), m_val_a));
     let m_reg_val_e = m.reg("M_reg_valE", QWORD);
-    m_reg_val_e.drive_next(m_val_e);
+    m_reg_val_e.drive_next(m.mux(m_bubble.eq(m.lit(ENABLE, BIT)), m.lit(false, QWORD), m_val_e));
     let m_reg_dst_e = m.reg("M_reg_dstE", NIBBLE);
-    m_reg_dst_e.drive_next(m_dst_e);
+    m_reg_dst_e.drive_next(m.mux(m_bubble.eq(m.lit(ENABLE, BIT)), m.lit(RNONE, NIBBLE), m_dst_e));
     let m_reg_dst_m = m.reg("M_reg_dstM", NIBBLE);
-    m_reg_dst_m.drive_next(m_dst_m);
+    m_reg_dst_m.drive_next(m.mux(m_bubble.eq(m.lit(ENABLE, BIT)), m.lit(RNONE, NIBBLE), m_dst_m));
     let m_reg_cnd = m.reg("M_reg_cnd", BIT);
     m_reg_cnd.drive_next(m_cnd);
 
