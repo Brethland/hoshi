@@ -5,8 +5,7 @@ Some design comes from *Computer System: A Programmer's Perspective*, which is k
 ## Unfinished
 1. Memory
 2. Exception handler
-3. BTFNT prediction
-4. Multi-period instructions
+3. Multi-period instructions
 
 ## Usage
 run `cargo run` to generate Verilog code in this path.

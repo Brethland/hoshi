@@ -9,7 +9,7 @@ pub fn f_reg<'a>(c: &'a Context<'a>) -> &'a Module {
     let f_val_p  = f.input("F_valP", QWORD);
     let f_icode = f.input("F_icode", NIBBLE);
 
-    let predict_pc = f.mux(f.lit(IJXX, NIBBLE).eq(f_icode) | f.lit(ICALL, NIBBLE).eq(f_icode),
+    let predict_pc = f.mux((f.lit(IJXX, NIBBLE).eq(f_icode) | f.lit(ICALL, NIBBLE).eq(f_icode)) & f_val_c.lt(f_val_p),
           f_val_c, f_val_p);
     
     let pred_pc = f.reg("predPC", QWORD);
